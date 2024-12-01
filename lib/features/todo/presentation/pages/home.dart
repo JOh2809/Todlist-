@@ -31,7 +31,6 @@ class HomePage extends ConsumerWidget {
                         onPressed: () {
                           // Show the modal bottom sheet for editing
                           showModalBottomSheet(
-                            showDragHandle: true,
                             isScrollControlled: true,
                             context: context,
                             builder: (context) {
@@ -82,9 +81,9 @@ class HomePage extends ConsumerWidget {
                                             onPressed: () {
                                               // Update the todo
                                               ref.read(todoControllerProvider.notifier).editTodo(
-                                                  todos[index].id,
-                                                  titleController.text.trim(),
-                                                  descriptionController.text.trim());
+                                                  id: todos[index].id,
+                                                  text: titleController.text.trim(),
+                                                  description: descriptionController.text.trim());
                                               Navigator.pop(context);
                                             },
                                             child: const Text('Edit Todo'),
@@ -103,7 +102,7 @@ class HomePage extends ConsumerWidget {
                       IconButton(
                         splashRadius: 20,
                         onPressed: () {
-                          ref.read(todoControllerProvider.notifier).deleteTodo(todos[index].id);
+                          ref.read(todoControllerProvider.notifier).deleteTodo(todo: todos[index]);
                         },
                         icon: const Icon(Icons.delete),
                       ),
@@ -164,11 +163,9 @@ class HomePage extends ConsumerWidget {
                             onPressed: () {
                               // Add new todo
                               ref.read(todoControllerProvider.notifier).addTodo(
-                                  Todo(
-                                    id: DateTime.now().millisecondsSinceEpoch,
-                                    text: titleController.text.trim(),
-                                    description: descriptionController.text.trim(),
-                                  ),
+                                titleController.text.trim(),
+                                descriptionController.text.trim(),
+                                DateTime.now().toIso8601String(), // Assuming the third argument is a DateTime for the creation date
                               );
                               Navigator.pop(context);
                             },

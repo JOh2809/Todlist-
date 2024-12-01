@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todlist/features/todo/domain/entities/todo.dart';
+import 'package:todolist/features/todo/domain/entities/todo.dart';
 
 //state notifier for managing todo state
 class TodoController extends StateNotifier<List<Todo>>{
@@ -23,7 +23,7 @@ class TodoController extends StateNotifier<List<Todo>>{
   }
 
   //add a new todo
-  void addTodo(){
+  void addTodo(String id, String text, String description){
     state = [
       ...state,
       Todo(

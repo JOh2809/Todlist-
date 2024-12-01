@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:todolist/features/todo/presentation/bindings/todo_binding.dart';
 import 'package:todolist/features/todo/presentation/pages/home.dart';
 import 'package:todolist/features/todo/presentation/providers/todo_provider.dart';
-import 'package:todolist/features/todo/entities/todo.dart';
+import 'package:todolist/features/todo/domain/entities/todo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:todolist/firebase_options.dart';
@@ -12,7 +12,7 @@ import 'package:todolist/firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
