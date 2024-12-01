@@ -1,34 +1,29 @@
-import 'dart:convert';
-
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Todo {
-  final String id;
+  final int id;
   final String text;
   final String description;
+
   Todo({
     required this.id,
     required this.text,
     required this.description,
   });
 
+  // Convert Todo to Map
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'id': id,
       'text': text,
       'description': description,
     };
   }
 
+  // Convert Map to Todo
   factory Todo.fromMap(Map<String, dynamic> map) {
     return Todo(
-      id: map['id'] as String,
-      text: map['text'] as String,
-      description: map['description'] as String,
+      id: map['id'],
+      text: map['text'],
+      description: map['description'],
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory Todo.fromJson(String source) =>
-      Todo.fromMap(json.decode(source) as Map<String, dynamic>);
 }

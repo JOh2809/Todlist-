@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:todolist/features/todo/domain/entities/todo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todolist/features/todo/domain/entities/todo.dart';
+import 'package:todolist/features/todo/presentation/providers/todo_provider.dart';
 
-import '../controller/todo_controller.dart';
-
-class HomePage extends GetView<TodoController> {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final todos = ref.watch(todoControllerProvider);
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todo Clean Architecture'),
       ),
-      body: StreamBuilder(
-        stream: controller.listTodo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final todos = snapshot.data!;
-            if (todos.isEmpty) {
-              return const Center(
-                child: Text("No todos found"),
-              );
-            }
-
-            return ListView.builder(
+      body: todos.isEmpty
+          ? const Center(child: Text("No todos found"))
+          : ListView.builder(
               itemCount: todos.length,
               itemBuilder: (context, index) {
                 return ListTile(
@@ -37,28 +29,28 @@ class HomePage extends GetView<TodoController> {
                       IconButton(
                         splashRadius: 20,
                         onPressed: () {
-                          controller.titleController.text = todos[index].text;
-                          controller.descriptionController.text =
-                              todos[index].description;
+                          // Show the modal bottom sheet for editing
                           showModalBottomSheet(
                             showDragHandle: true,
                             isScrollControlled: true,
                             context: context,
                             builder: (context) {
+                              final titleController =
+                                  TextEditingController(text: todos[index].text);
+                              final descriptionController =
+                                  TextEditingController(text: todos[index].description);
+
                               return Container(
                                 width: double.maxFinite,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.8,
+                                height: MediaQuery.of(context).size.height * 0.8,
                                 color: Colors.white,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Form(
-                                    key: controller.formKey,
                                     child: Column(
                                       children: [
                                         TextFormField(
-                                          controller:
-                                              controller.titleController,
+                                          controller: titleController,
                                           validator: (value) {
                                             if (value!.isEmpty) {
                                               return 'Title is required';
@@ -70,11 +62,9 @@ class HomePage extends GetView<TodoController> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 8.0),
+                                          padding: const EdgeInsets.only(bottom: 8.0),
                                           child: TextFormField(
-                                            controller: controller
-                                                .descriptionController,
+                                            controller: descriptionController,
                                             validator: (value) {
                                               if (value!.isEmpty) {
                                                 return 'Description is required';
@@ -89,23 +79,13 @@ class HomePage extends GetView<TodoController> {
                                         SizedBox(
                                           width: double.maxFinite,
                                           child: ElevatedButton(
-                                            onPressed: () async {
-                                              if (controller
-                                                  .formKey.currentState!
-                                                  .validate()) {
-                                                controller.editTodo(Todo(
-                                                  id: todos[index].id,
-                                                  text: controller
-                                                      .titleController.text
-                                                      .trim(),
-                                                  description: controller
-                                                      .descriptionController
-                                                      .text
-                                                      .trim(),
-                                                ));
-                                                // pop the bottom sheet
-                                                Navigator.pop(context);
-                                              }
+                                            onPressed: () {
+                                              // Update the todo
+                                              ref.read(todoControllerProvider.notifier).editTodo(
+                                                  todos[index].id,
+                                                  titleController.text.trim(),
+                                                  descriptionController.text.trim());
+                                              Navigator.pop(context);
                                             },
                                             child: const Text('Edit Todo'),
                                           ),
@@ -123,7 +103,7 @@ class HomePage extends GetView<TodoController> {
                       IconButton(
                         splashRadius: 20,
                         onPressed: () {
-                          controller.deleteTodo(todos[index]);
+                          ref.read(todoControllerProvider.notifier).deleteTodo(todos[index].id);
                         },
                         icon: const Icon(Icons.delete),
                       ),
@@ -131,13 +111,7 @@ class HomePage extends GetView<TodoController> {
                   ),
                 );
               },
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
-        },
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -145,6 +119,9 @@ class HomePage extends GetView<TodoController> {
             isScrollControlled: true,
             context: context,
             builder: (context) {
+              final titleController = TextEditingController();
+              final descriptionController = TextEditingController();
+
               return Container(
                 width: double.maxFinite,
                 height: MediaQuery.of(context).size.height * 0.8,
@@ -152,11 +129,10 @@ class HomePage extends GetView<TodoController> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Form(
-                    key: controller.formKey,
                     child: Column(
                       children: [
                         TextFormField(
-                          controller: controller.titleController,
+                          controller: titleController,
                           validator: (value) {
                             if (value!.isEmpty) {
                               return 'Title is required';
@@ -170,7 +146,7 @@ class HomePage extends GetView<TodoController> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: TextFormField(
-                            controller: controller.descriptionController,
+                            controller: descriptionController,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Description is required';
@@ -185,14 +161,18 @@ class HomePage extends GetView<TodoController> {
                         SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButton(
-                            onPressed: () async {
-                              if (controller.formKey.currentState!.validate()) {
-                                controller.addTodo();
-                                // pop the bottom sheet
-                                Navigator.pop(context);
-                              }
+                            onPressed: () {
+                              // Add new todo
+                              ref.read(todoControllerProvider.notifier).addTodo(
+                                  Todo(
+                                    id: DateTime.now().millisecondsSinceEpoch,
+                                    text: titleController.text.trim(),
+                                    description: descriptionController.text.trim(),
+                                  ),
+                              );
+                              Navigator.pop(context);
                             },
-                            child: const Text('Add'),
+                            child: const Text('Add Todo'),
                           ),
                         ),
                       ],
