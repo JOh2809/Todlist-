@@ -16,14 +16,14 @@ class TodoRemoteDatabaseImpl implements TodoRemoteDatabase {
   Future<Todo> addTodo(Todo todo) async {
     await FirebaseFirestore.instance
         .collection('todos')
-        .doc(todo.id)
+        .doc(todo.id.toString())
         .set(todo.toMap());
     return todo;
   }
 
   @override
   Future<Todo> deleteTodo(Todo todo) async {
-    await FirebaseFirestore.instance.collection('todos').doc(todo.id).delete();
+    await FirebaseFirestore.instance.collection('todos').doc(todo.id as String?).delete();
     return todo;
   }
 
@@ -31,7 +31,7 @@ class TodoRemoteDatabaseImpl implements TodoRemoteDatabase {
   Future<Todo> editTodo(Todo todo) async {
     await FirebaseFirestore.instance
         .collection('todos')
-        .doc(todo.id)
+        .doc(todo.id as String?)
         .update(todo.toMap());
     return todo;
   }

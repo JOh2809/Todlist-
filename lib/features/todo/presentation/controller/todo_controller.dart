@@ -28,7 +28,7 @@ class TodoController extends GetxController {
   Future<void> addTodo() async {
     final results = await addTodoUseCase(Params(
       Todo(
-        id: generateRandomId(10),
+        id: int.parse(generateRandomId(10)).toInt(),
         text: titleController.text.trim(),
         description: descriptionController.text.trim(),
       ),
