@@ -23,7 +23,7 @@ class TodoController extends StateNotifier<List<Todo>>{
   }
 
   //add a new todo
-  void addTodo(String id, String text, String description){
+  void addTodo(String text, String description){
     print('Adding todo - PROVIDER');
     state = [
       ...state,

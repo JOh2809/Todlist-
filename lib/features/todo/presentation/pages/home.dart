@@ -163,7 +163,6 @@ class HomePage extends ConsumerWidget {
                             onPressed: () {
                               // Add new todo
                               ref.read(todoControllerProvider.notifier).addTodo(
-                                id(DateTime.now().toString()),
                                 titleController.text.trim(),
                                 descriptionController.text.trim()
                               );
