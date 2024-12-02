@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todolist/features/todo/domain/entities/todo.dart';
@@ -162,9 +163,9 @@ class HomePage extends ConsumerWidget {
                             onPressed: () {
                               // Add new todo
                               ref.read(todoControllerProvider.notifier).addTodo(
+                                id(DateTime.now().toString()),
                                 titleController.text.trim(),
-                                descriptionController.text.trim(),
-                                DateTime.now().toIso8601String(), // Assuming the third argument is a DateTime for the creation date
+                                descriptionController.text.trim()
                               );
                               Navigator.pop(context);
                             },

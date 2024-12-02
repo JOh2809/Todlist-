@@ -24,12 +24,13 @@ class TodoController extends StateNotifier<List<Todo>>{
 
   //add a new todo
   void addTodo(String id, String text, String description){
+    print('Adding todo - PROVIDER');
     state = [
       ...state,
       Todo(
         id: state.length + 1,
-        text: 'Todo ${state.length + 1}',
-        description: 'Description ${state.length + 1}',
+        text: text,
+        description: description,
       ),
     ];
   }
@@ -40,6 +41,7 @@ class TodoController extends StateNotifier<List<Todo>>{
     required String text,
     required String description,
   }){
+    print('Editing todo - PROVIDER');
     state = state.map((todo) => todo.id == id ? Todo(
       id: id,
       text: text,
@@ -51,6 +53,7 @@ class TodoController extends StateNotifier<List<Todo>>{
   void deleteTodo({
     required Todo todo,
   }){
+    print('Deleting todo - PROVIDER');
     state = state.where((element) => element.id != todo.id).toList();
   }
 

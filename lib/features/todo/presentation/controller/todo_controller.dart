@@ -26,6 +26,7 @@ class TodoController extends GetxController {
   });
 
   Future<void> addTodo() async {
+    print("Adding todo");
     final results = await addTodoUseCase(Params(
       Todo(
         id: int.parse(generateRandomId(10)).toInt(),
@@ -45,6 +46,7 @@ class TodoController extends GetxController {
   }
 
   Stream<List<Todo>> listTodo() async* {
+    print("Listing todos");
     final results = await listTodoUseCase(NoParams());
     yield* results.fold(
       (failure) {
@@ -59,6 +61,7 @@ class TodoController extends GetxController {
   }
 
   Future<void> deleteTodo(Todo todo) async {
+    print("Deleting todo");
     final results = await deleteTodoUseCase(Params(todo));
     results.fold(
       (failure) => Get.snackbar("Error", failure.message),
@@ -67,6 +70,7 @@ class TodoController extends GetxController {
   }
 
   Future<void> editTodo(Todo todo) async {
+    print("Editing todo");
     final results = await editTodoUseCase(Params(todo));
     results.fold(
       (failure) => Get.snackbar("Error", failure.message),
